@@ -4,7 +4,6 @@ import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { User } from './user/user.entity';
 import { AuthModule } from './auth/auth.module';
-import { RefreshToken } from './auth/entities/refresh-token.entity';
 
 @Module({
   imports: [
@@ -16,7 +15,7 @@ import { RefreshToken } from './auth/entities/refresh-token.entity';
       username: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
-      entities: [User, RefreshToken],
+      entities: [User],
       synchronize: true,
     }),
     UserModule,

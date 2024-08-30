@@ -1,6 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import { IsEmail, Length, Matches } from 'class-validator';
-import { RefreshToken } from '../auth/entities/refresh-token.entity';
 
 @Entity()
 export class User {
@@ -30,7 +29,4 @@ export class User {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   timestamp: Date;
-
-  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
-  refreshTokens: RefreshToken[];
 }
