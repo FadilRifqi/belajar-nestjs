@@ -5,6 +5,8 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
+import { LocalStrategy } from './strategies/local.strategy';
+import { LocalAuthGuard } from './guards/local.guard';
 
 @Module({
   imports: [
@@ -15,7 +17,7 @@ import { ConfigModule } from '@nestjs/config';
       signOptions: { expiresIn: '1h' },
     }),
   ],
-  providers: [AuthService],
+  providers: [AuthService, LocalStrategy, LocalAuthGuard],
   controllers: [AuthController],
 })
 export class AuthModule {}

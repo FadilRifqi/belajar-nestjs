@@ -1,11 +1,9 @@
-import { Controller, Post, Body, Query } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import {
-  LoginPayloadDto,
-  RefreshTokenDto,
-  RegisterPayloadDto,
-} from './dto/auth.dto';
+import { RegisterPayloadDto } from './dto/auth.dto';
 import { ValidationPipe } from '@nestjs/common';
+import { LocalAuthGuard } from './guards/local.guard';
+import { Request } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -16,19 +14,17 @@ export class AuthController {
     @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
     createUserDto: RegisterPayloadDto,
   ) {
-    return this.authService.register(createUserDto);
+    return await this.authService.register(createUserDto);
   }
 
   @Post('login')
-  async login(
-    @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-    loginPayload: LoginPayloadDto,
-  ) {
-    return this.authService.validateUser(loginPayload);
+  @UseGuards(LocalAuthGuard)
+  async login(@Req() req: Request) {
+    return req.user;
   }
 
-  @Post('refresh-token')
-  async refreshToken(@Query('token') refreshTokenDto: RefreshTokenDto) {
-    return this.authService.refreshToken(refreshTokenDto);
-  }
+  //   @Post('refresh-token')
+  //   async refreshToken(@Query('token') refreshTokenDto: RefreshTokenDto) {
+  //     return await this.authService.refreshToken(refreshTokenDto);
+  //   }
 }
