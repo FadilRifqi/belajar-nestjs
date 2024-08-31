@@ -1,4 +1,12 @@
-import { Controller, Post, Body, UseGuards, Req, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Req,
+  Get,
+  Param,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterPayloadDto } from './dto/auth.dto';
 import { ValidationPipe } from '@nestjs/common';
@@ -24,10 +32,21 @@ export class AuthController {
     return req.user;
   }
 
+  @Post('logout')
+  @UseGuards(JwtAuthGuard)
+  async logout(@Req() req: Request) {
+    return req.user;
+  }
+
   @Get('session')
   @UseGuards(JwtAuthGuard)
   status(@Req() req: Request) {
     return req.user;
+  }
+
+  @Get('confirm-email/:token')
+  async confirmEmail(@Param('token') token: string) {
+    return await this.authService.confirmEmail(token);
   }
   //   @Post('refresh-token')
   //   async refreshToken(@Query('token') refreshTokenDto: RefreshTokenDto) {

@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { IsEmail, Length, Matches } from 'class-validator';
+import { ConfirmEmailToken } from 'src/auth/entities/confirm-email.entity';
 
 @Entity()
 export class User {
@@ -26,6 +27,12 @@ export class User {
 
   @Column({ default: false })
   isEmailConfirmed: boolean;
+
+  @OneToMany(
+    () => ConfirmEmailToken,
+    (confirmEmailToken) => confirmEmailToken.user,
+  )
+  confirmEmailTokens: ConfirmEmailToken[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   timestamp: Date;
