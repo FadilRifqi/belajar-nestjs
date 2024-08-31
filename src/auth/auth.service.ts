@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../user/user.entity';
+import { User } from '../user/entities/user.entity';
 import {
   LoginPayloadDto,
   RegisterPayloadDto,
@@ -57,6 +57,7 @@ export class AuthService {
     }
 
     const payload = {
+      id: user.id,
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
