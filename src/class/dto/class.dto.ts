@@ -1,13 +1,17 @@
-import { IsNotEmpty, IsString, IsDateString } from 'class-validator';
+import { IsNotEmpty, IsString, IsDateString, IsNumber } from 'class-validator';
 
 export class ClassDto {
   @IsNotEmpty()
   @IsString()
-  name: string;
+  day: string;
 
   @IsNotEmpty()
-  @IsString()
-  day: string;
+  @IsNumber()
+  classSubjectId: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  classTypeId: number;
 
   @IsNotEmpty()
   @IsDateString()

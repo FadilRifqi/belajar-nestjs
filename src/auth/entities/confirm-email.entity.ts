@@ -18,6 +18,9 @@ export class ConfirmEmailToken {
   @Column()
   token: string;
 
+  @Column({ default: true })
+  isActive: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 

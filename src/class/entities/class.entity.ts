@@ -4,8 +4,11 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 import { IsNotEmpty, IsString, IsDateString } from 'class-validator';
+import { ClassSubject } from './class-subject.entity';
+import { ClassType } from './class-type.entity';
 
 @Entity()
 export class Class {
@@ -16,10 +19,13 @@ export class Class {
   @IsNotEmpty()
   userId: number;
 
-  @Column()
+  @ManyToOne(() => ClassSubject, (classSubject) => classSubject.classes)
   @IsNotEmpty()
-  @IsString()
-  name: string;
+  classSubject: ClassSubject;
+
+  @ManyToOne(() => ClassType, (classType) => classType.classes)
+  @IsNotEmpty()
+  classType: ClassType;
 
   @Column()
   @IsNotEmpty()

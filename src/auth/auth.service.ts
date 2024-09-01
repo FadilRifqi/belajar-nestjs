@@ -114,7 +114,11 @@ export class AuthService {
     }
 
     const existingToken = await this.confirmEmailTokenRepository.findOne({
-      where: { user: { id: userId }, expiresAt: MoreThan(new Date()) },
+      where: {
+        user: { id: userId },
+        expiresAt: MoreThan(new Date()),
+        isActive: false,
+      },
     });
 
     if (existingToken) {
@@ -134,17 +138,9 @@ export class AuthService {
     return token;
   }
 
-  private async sendConfirmationEmail(email: string, token: string) {
-    const confirmationUrl = `$${process.env.BASE_URL}/confirm-email?token=${token}`;
-    // Implement your email sending logic here
-    console.log(
-      `Send email to ${email} with confirmation URL: ${confirmationUrl}`,
-    );
-  }
-
-  async confirmEmail(token: string) {
+  async confirmEmail(token: string, res: any) {
     const confirmEmailToken = await this.confirmEmailTokenRepository.findOne({
-      where: { token },
+      where: { token, isActive: true },
       relations: ['user'],
     });
     if (!confirmEmailToken) {
@@ -161,22 +157,10 @@ export class AuthService {
     const user = confirmEmailToken.user;
     user.isEmailConfirmed = true;
     await this.userService.update(user.id, user);
-    await this.confirmEmailTokenRepository.delete(confirmEmailToken.id);
-    const payload = {
-      id: user.id,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      isEmailConfirmed: user.isEmailConfirmed,
-    };
-    const accessToken = this.jwtService.sign(payload);
+    confirmEmailToken.isActive = false;
+    await this.confirmEmailTokenRepository.save(confirmEmailToken);
 
-    // Generate a new refresh token
-    const refreshToken = this.jwtService.sign(payload, {
-      expiresIn: this.refreshTokenExpiry,
-    });
-
-    return { accessToken, refreshToken };
+    res.redirect(301, 'https://google.com');
   }
 
   //   async refreshToken(refreshTokenDto: RefreshTokenDto) {

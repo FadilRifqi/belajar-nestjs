@@ -7,6 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import { ClassModule } from './class/class.module';
 import { Class } from './class/entities/class.entity';
 import { ConfirmEmailToken } from './auth/entities/confirm-email.entity';
+import { ClassType } from './class/entities/class-type.entity';
+import { ClassSubject } from './class/entities/class-subject.entity';
 
 @Module({
   imports: [
@@ -18,7 +20,7 @@ import { ConfirmEmailToken } from './auth/entities/confirm-email.entity';
       username: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
-      entities: [User, Class, ConfirmEmailToken],
+      entities: [User, Class, ConfirmEmailToken, ClassType, ClassSubject],
       synchronize: true,
     }),
     UserModule,

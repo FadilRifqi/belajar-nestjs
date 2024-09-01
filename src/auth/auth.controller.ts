@@ -6,6 +6,7 @@ import {
   Req,
   Get,
   Param,
+  Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterPayloadDto } from './dto/auth.dto';
@@ -45,8 +46,8 @@ export class AuthController {
   }
 
   @Get('confirm-email/:token')
-  async confirmEmail(@Param('token') token: string) {
-    return await this.authService.confirmEmail(token);
+  async confirmEmail(@Param('token') token: string, @Res() res: any) {
+    return await this.authService.confirmEmail(token, res);
   }
   //   @Post('refresh-token')
   //   async refreshToken(@Query('token') refreshTokenDto: RefreshTokenDto) {
