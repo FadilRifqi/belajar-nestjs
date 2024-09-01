@@ -60,4 +60,4 @@ package-lock.json
 
 #dev config
 .eslintrc.js
-.prettierrc.js
+.prettierrc
