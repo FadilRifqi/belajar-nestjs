@@ -159,8 +159,6 @@ export class AuthService {
     await this.userService.update(user.id, user);
     confirmEmailToken.isActive = false;
     await this.confirmEmailTokenRepository.save(confirmEmailToken);
-
-    res.redirect(301, 'https://google.com');
   }
 
   //   async refreshToken(refreshTokenDto: RefreshTokenDto) {

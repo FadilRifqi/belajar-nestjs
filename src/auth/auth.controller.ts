@@ -47,7 +47,8 @@ export class AuthController {
 
   @Get('confirm-email/:token')
   async confirmEmail(@Param('token') token: string, @Res() res: any) {
-    return await this.authService.confirmEmail(token, res);
+    await this.authService.confirmEmail(token, res);
+    res.redirect(301, 'https://google.com');
   }
   //   @Post('refresh-token')
   //   async refreshToken(@Query('token') refreshTokenDto: RefreshTokenDto) {
