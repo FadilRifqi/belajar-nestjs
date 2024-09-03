@@ -9,7 +9,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegisterPayloadDto } from './dto/auth.dto';
+import { RefreshTokenDto, RegisterPayloadDto } from './dto/auth.dto';
 import { ValidationPipe } from '@nestjs/common';
 import { LocalAuthGuard } from './guards/local.guard';
 import { Request } from 'express';
@@ -47,11 +47,11 @@ export class AuthController {
 
   @Get('confirm-email/:token')
   async confirmEmail(@Param('token') token: string, @Res() res: any) {
-    await this.authService.confirmEmail(token, res);
+    await this.authService.confirmEmail(token);
     res.redirect(301, 'https://google.com');
   }
-  //   @Post('refresh-token')
-  //   async refreshToken(@Query('token') refreshTokenDto: RefreshTokenDto) {
-  //     return await this.authService.refreshToken(refreshTokenDto);
-  //   }
+  @Post('refresh-token')
+  async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
+    return await this.authService.refreshToken(refreshTokenDto);
+  }
 }

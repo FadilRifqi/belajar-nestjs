@@ -2,12 +2,14 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThan, Repository } from 'typeorm';
 import { User } from '../user/entities/user.entity';
 import {
   LoginPayloadDto,
+  RefreshTokenDto,
   RegisterPayloadDto,
   //   RefreshTokenDto,
 } from './dto/auth.dto';
@@ -138,7 +140,7 @@ export class AuthService {
     return token;
   }
 
-  async confirmEmail(token: string, res: any) {
+  async confirmEmail(token: string) {
     const confirmEmailToken = await this.confirmEmailTokenRepository.findOne({
       where: { token, isActive: true },
       relations: ['user'],
@@ -161,7 +163,33 @@ export class AuthService {
     await this.confirmEmailTokenRepository.save(confirmEmailToken);
   }
 
-  //   async refreshToken(refreshTokenDto: RefreshTokenDto) {
-  //     return { message: 'Refresh token endpoint' };
-  //   }
+  async refreshToken(refreshTokenDto: RefreshTokenDto) {
+    const { refreshToken } = refreshTokenDto;
+    try {
+      const payload = this.jwtService.verify(refreshToken, {
+        secret: process.env.JWT_REFRESH_SECRET,
+      });
+      const user = await this.userService.findOne(payload.sub);
+
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
+
+      const newPayload = {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        isEmailConfirmed: user.isEmailConfirmed,
+      };
+
+      const newAccessToken = this.jwtService.sign(newPayload);
+
+      return {
+        accessToken: newAccessToken,
+      };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid refresh token', error.message);
+    }
+  }
 }

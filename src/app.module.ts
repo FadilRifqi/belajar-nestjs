@@ -12,7 +12,10 @@ import { ClassSubject } from './class/entities/class-subject.entity';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: `config/${process.env.NODE_ENV}.env`,
+    }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',
