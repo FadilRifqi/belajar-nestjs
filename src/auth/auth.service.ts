@@ -55,25 +55,8 @@ export class AuthService {
 
     await this.userRepository.save(newUser);
 
-    // Generate confirmation token (you can use JWT or any other method)
-    const confirmationToken = await this.createConfirmEmailToken(newUser.id);
-
-    // Send confirmation email
-    const confirmationUrl = `${process.env.BASE_URL}/auth/confirm-email/${confirmationToken}`;
-    console.log('confirmation', confirmationToken);
-
-    await this.mailerService.sendMail({
-      to: newUser.email,
-      subject: 'Email Confirmation',
-      template: './confirmation', // path to your email template
-      context: {
-        name: newUser.firstName,
-        confirmationUrl,
-      },
-    });
     return {
-      message:
-        'User registered successfully. Please check your email for confirmation.',
+      message: 'User registered successfully.',
     };
   }
 
@@ -137,7 +120,22 @@ export class AuthService {
     });
 
     await this.confirmEmailTokenRepository.save(confirmEmailToken);
-    return token;
+
+    const confirmationUrl = `${process.env.BASE_URL}/auth/confirm-email/${token}`;
+
+    await this.mailerService.sendMail({
+      to: user.email,
+      subject: 'Email Confirmat ion',
+      template: './confirmation', // path to your email template
+      context: {
+        name: user.firstName,
+        confirmationUrl,
+      },
+    });
+
+    return {
+      message: 'Email confirmation token sent successfully',
+    };
   }
 
   async confirmEmail(token: string) {

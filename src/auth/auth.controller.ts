@@ -7,6 +7,7 @@ import {
   Get,
   Param,
   Res,
+  BadRequestException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RefreshTokenDto, RegisterPayloadDto } from './dto/auth.dto';
@@ -45,10 +46,19 @@ export class AuthController {
     return req.user;
   }
 
-  @Get('confirm-email/:token')
+  @Post('create-confirm-email-token')
+  async createConfirmEmailToken(@Body('id') id: number) {
+    if (!id) {
+      throw new BadRequestException('No user id provided');
+    }
+
+    return await this.authService.createConfirmEmailToken(id);
+  }
+
+  @Post('confirm-email/:token')
   async confirmEmail(@Param('token') token: string, @Res() res: any) {
     await this.authService.confirmEmail(token);
-    res.redirect(301, 'https://google.com');
+    res.redirect(301, `${process.env.FRONTEND_URL}/refresh-token`);
   }
   @Post('refresh-token')
   async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
